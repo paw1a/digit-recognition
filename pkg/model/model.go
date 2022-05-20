@@ -1,0 +1,31 @@
+package model
+
+import "github.com/paw1a/digit-recognition/pkg/algebra"
+
+type layer struct {
+	weights    [][]float64
+	biases     []float64
+	activation func(x []float64) []float64
+	derivative func(x []float64) []float64
+}
+
+type model struct {
+	layers []layer
+}
+
+func NewModel(sizes []int) *model {
+	model := &model{
+		layers: make([]layer, len(sizes)),
+	}
+
+	for i := 0; i < len(sizes)-1; i++ {
+		model.layers[i] = layer{
+			weights:    algebra.RandomMatrix(sizes[i], sizes[i+1]),
+			biases:     algebra.RandomVector(sizes[i+1]),
+			activation: ReluActivation,
+			derivative: ReluDerivative,
+		}
+	}
+
+	return model
+}
