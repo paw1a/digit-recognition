@@ -3,14 +3,14 @@ package main
 import (
 	"fmt"
 	"github.com/paw1a/digit-recognition/pkg/algebra"
+	"github.com/paw1a/digit-recognition/pkg/model"
 )
 
 func main() {
-	matrix := algebra.RandomMatrix(10, 10)
-	vector := make([]float64, 10)
-	for i := 0; i < 10; i++ {
-		vector[i] = float64(i * 10)
-	}
+	mod := model.NewModel([]int{784, 128, 64, 10})
 
-	fmt.Printf("%v", algebra.DotMatrixVector(matrix, vector))
+	input := algebra.RandomVector(784)
+	output := mod.FeedForward(input)
+
+	fmt.Printf("%v", output)
 }

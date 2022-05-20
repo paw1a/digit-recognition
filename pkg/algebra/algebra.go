@@ -1,6 +1,23 @@
 package algebra
 
-import "math/rand"
+import (
+	"fmt"
+	"math/rand"
+)
+
+func AddVector(vector1 []float64, vector2 []float64) []float64 {
+	if len(vector1) != len(vector2) {
+		return nil
+	}
+
+	result := make([]float64, len(vector1))
+
+	for i := 0; i < len(vector1); i++ {
+		result[i] = vector1[i] + vector2[i]
+	}
+
+	return result
+}
 
 func RandomMatrix(height int, width int) [][]float64 {
 	matrix := make([][]float64, height)
@@ -27,15 +44,16 @@ func RandomVector(size int) []float64 {
 
 func DotMatrixVector(matrix [][]float64, vector []float64) []float64 {
 	if len(matrix) == 0 || len(matrix) != len(vector) {
+		fmt.Printf("err")
 		return nil
 	}
 
-	result := make([]float64, len(matrix))
+	result := make([]float64, len(matrix[0]))
 
-	for i := 0; i < len(matrix); i++ {
+	for i := 0; i < len(matrix[0]); i++ {
 		var sum float64
-		for j := 0; j < len(matrix[0]); j++ {
-			sum += matrix[i][j] * vector[i]
+		for j := 0; j < len(matrix); j++ {
+			sum += matrix[j][i] * vector[j]
 		}
 		result[i] = sum
 	}

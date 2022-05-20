@@ -1,6 +1,8 @@
 package model
 
-import "github.com/paw1a/digit-recognition/pkg/algebra"
+import (
+	"github.com/paw1a/digit-recognition/pkg/algebra"
+)
 
 type layer struct {
 	weights    [][]float64
@@ -27,5 +29,19 @@ func NewModel(sizes []int) *model {
 		}
 	}
 
+	model.layers[len(model.layers)-1].activation = SoftmaxActivation
+
 	return model
+}
+
+func (m *model) FeedForward(inputs []float64) []float64 {
+	activated := inputs
+
+	for i := 0; i < len(m.layers)-1; i++ {
+		weightedSum := algebra.DotMatrixVector(m.layers[i].weights, activated)
+		weightedSum = algebra.AddVector(weightedSum, m.layers[i].biases)
+		activated = m.layers[i+1].activation(weightedSum)
+	}
+
+	return activated
 }

@@ -1,6 +1,8 @@
 package model
 
-import "math"
+import (
+	"math"
+)
 
 func ReluActivation(x []float64) []float64 {
 	result := make([]float64, len(x))
