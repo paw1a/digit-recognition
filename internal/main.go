@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	mod := model.NewModel([]int{784, 128, 64, 10}, 0.001)
+	mod := model.NewModel([]int{784, 128, 64, 10}, 0.001, 5)
 
 	input := algebra.RandomVector(784)
 	output := mod.FeedForward(input)

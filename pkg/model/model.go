@@ -16,6 +16,7 @@ type layer struct {
 type model struct {
 	layers       []layer
 	learningRate float64
+	epochs       int
 }
 
 func (m *model) FeedForward(input []float64) []float64 {
@@ -61,7 +62,7 @@ func (m *model) BackPropagation(output []float64, real []float64) {
 	}
 }
 
-func NewModel(sizes []int, learningRate float64) *model {
+func NewModel(sizes []int, learningRate float64, epochs int) *model {
 	model := &model{
 		layers:       make([]layer, len(sizes)),
 		learningRate: learningRate,
