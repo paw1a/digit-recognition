@@ -18,18 +18,12 @@ func ReluActivation(x []float64) []float64 {
 	return result
 }
 
-func ReluDerivative(x []float64) []float64 {
-	result := make([]float64, len(x))
-
-	for i := 0; i < len(x); i++ {
-		if x[i] <= 0 {
-			result[i] = 0
-		} else {
-			result[i] = 1
-		}
+func ReluDerivative(x float64) float64 {
+	if x <= 0 {
+		return 0
+	} else {
+		return 1
 	}
-
-	return result
 }
 
 func SoftmaxActivation(x []float64) []float64 {
@@ -45,4 +39,8 @@ func SoftmaxActivation(x []float64) []float64 {
 	}
 
 	return result
+}
+
+func SoftmaxDerivativeStub(x float64) float64 {
+	return 1
 }

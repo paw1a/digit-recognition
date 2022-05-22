@@ -74,3 +74,60 @@ func DotVector(vector1 []float64, vector2 []float64) []float64 {
 
 	return result
 }
+
+func MultiplyMatrix(matrix [][]float64, number float64) {
+	if len(matrix) == 0 {
+		return
+	}
+
+	for i := 0; i < len(matrix); i++ {
+		for j := 0; j < len(matrix[0]); j++ {
+			matrix[i][j] *= number
+		}
+	}
+}
+
+func MultiplyVectors(vector1 []float64, vector2 []float64) [][]float64 {
+	matrix := make([][]float64, len(vector1))
+
+	for i := 0; i < len(vector1); i++ {
+		matrix[i] = make([]float64, len(vector2))
+		for j := 0; j < len(vector2); j++ {
+			matrix[i][j] = vector1[i] * vector2[j]
+		}
+	}
+
+	return matrix
+}
+
+func MultiplyVector(vector []float64, number float64) []float64 {
+	result := make([]float64, len(vector))
+
+	for i := 0; i < len(vector); i++ {
+		result[i] = vector[i] * number
+	}
+
+	return result
+}
+
+func DiffVector(vector []float64, delta []float64) {
+	if len(vector) != len(delta) {
+		return
+	}
+
+	for i := 0; i < len(vector); i++ {
+		vector[i] -= delta[i]
+	}
+}
+
+func DiffMatrix(matrix1 [][]float64, matrix2 [][]float64) {
+	if len(matrix1) == 0 {
+		return
+	}
+
+	for i := 0; i < len(matrix1); i++ {
+		for j := 0; j < len(matrix1[0]); j++ {
+			matrix1[i][j] -= matrix2[i][j]
+		}
+	}
+}

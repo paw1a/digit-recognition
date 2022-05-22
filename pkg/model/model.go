@@ -5,19 +5,66 @@ import (
 )
 
 type layer struct {
-	weights    [][]float64
-	biases     []float64
-	activation func(x []float64) []float64
-	derivative func(x []float64) []float64
+	weights     [][]float64
+	biases      []float64
+	weightedSum []float64
+	activated   []float64
+	activation  func(x []float64) []float64
+	derivative  func(x float64) float64
 }
 
 type model struct {
-	layers []layer
+	layers       []layer
+	learningRate float64
 }
 
-func NewModel(sizes []int) *model {
+func (m *model) FeedForward(input []float64) []float64 {
+	m.layers[0].activated = input
+
+	for i := 0; i < len(m.layers)-1; i++ {
+		m.layers[i].weightedSum = algebra.DotMatrixVector(m.layers[i].weights, m.layers[i].activated)
+		m.layers[i].weightedSum = algebra.AddVector(m.layers[i].weightedSum, m.layers[i].biases)
+		m.layers[i+1].activated = m.layers[i+1].activation(m.layers[i].weightedSum)
+	}
+
+	return m.layers[len(m.layers)-1].activated
+}
+
+func (m *model) BackPropagation(output []float64, real []float64) {
+	delta := make([]float64, len(output))
+
+	for i := 0; i < len(delta); i++ {
+		delta[i] = output[i] - real[i]
+	}
+
+	for i := len(m.layers) - 2; i >= 0; i-- {
+		for j := 0; j < len(m.layers[i].weights); j++ {
+			for k := 0; k < len(m.layers[i].weights[0]); k++ {
+				if j == 0 {
+					m.layers[i].biases[k] -= m.learningRate * delta[k]
+				}
+				m.layers[i].weights[j][k] -= m.learningRate * delta[k] * m.layers[i].activated[j] *
+					m.layers[i].derivative(m.layers[i].weightedSum[k])
+			}
+		}
+
+		tempDelta := delta
+		delta = make([]float64, len(m.layers[i].weights))
+
+		for j := 0; j < len(m.layers[i].weights); j++ {
+			var sum float64
+			for k := 0; k < len(m.layers[i].weights[0]); k++ {
+				sum += tempDelta[k] * m.layers[i].weights[j][k]
+			}
+			delta[j] = sum
+		}
+	}
+}
+
+func NewModel(sizes []int, learningRate float64) *model {
 	model := &model{
-		layers: make([]layer, len(sizes)),
+		layers:       make([]layer, len(sizes)),
+		learningRate: learningRate,
 	}
 
 	for i := 0; i < len(sizes)-1; i++ {
@@ -30,18 +77,7 @@ func NewModel(sizes []int) *model {
 	}
 
 	model.layers[len(model.layers)-1].activation = SoftmaxActivation
+	model.layers[len(model.layers)-1].derivative = SoftmaxDerivativeStub
 
 	return model
-}
-
-func (m *model) FeedForward(inputs []float64) []float64 {
-	activated := inputs
-
-	for i := 0; i < len(m.layers)-1; i++ {
-		weightedSum := algebra.DotMatrixVector(m.layers[i].weights, activated)
-		weightedSum = algebra.AddVector(weightedSum, m.layers[i].biases)
-		activated = m.layers[i+1].activation(weightedSum)
-	}
-
-	return activated
 }
