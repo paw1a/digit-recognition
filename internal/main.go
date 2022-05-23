@@ -15,14 +15,23 @@ const (
 )
 
 func main() {
-	mod := model.NewModel([]int{784, 128, 64, 10}, 0.001, 5)
+	mod := model.NewModel([]int{784, 800, 10}, 0.001, 5)
 
-	images, labels, err := dataset.LoadDataset(
+	trainImages, trainLabels, err := dataset.LoadDataset(
 		path.Join("mnist", TrainImages), path.Join("mnist", TrainLabels))
 	if err != nil {
 		fmt.Printf("%v", err)
 		return
 	}
 
-	mod.Fit(images, labels)
+	testImages, testLabels, err := dataset.LoadDataset(
+		path.Join("mnist", TestImages), path.Join("mnist", TestLabels))
+	if err != nil {
+		fmt.Printf("%v", err)
+		return
+	}
+
+	mod.Fit(trainImages, trainLabels)
+
+	mod.TestModel(testImages, testLabels)
 }
