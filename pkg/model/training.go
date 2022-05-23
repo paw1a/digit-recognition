@@ -34,19 +34,18 @@ func (m *model) Fit(input [][]float64, real [][]float64) {
 			}
 
 			for k := 0; k < len(output); k++ {
-				if real[inputIndex][j] == 1 {
+				if real[inputIndex][k] == 1 {
 					loss += -math.Log(output[k])
 					break
 				}
 			}
 
 			m.BackPropagation(output, real[inputIndex])
-
-			printLearningStat(i, loss/float64(len(input)), float64(correct)/float64(len(input)))
 		}
+		printLearningStat(i+1, loss/float64(len(input)), float64(correct)/float64(len(input)))
 	}
 }
 
 func printLearningStat(epoch int, loss float64, accuracy float64) {
-	fmt.Printf("Epoch: %d. Loss = %f. Accuracy = %f", epoch, loss, accuracy)
+	fmt.Printf("Epoch: %d. Loss = %f. Accuracy = %f\n", epoch, loss, accuracy)
 }

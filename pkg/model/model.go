@@ -66,6 +66,7 @@ func NewModel(sizes []int, learningRate float64, epochs int) *model {
 	model := &model{
 		layers:       make([]layer, len(sizes)),
 		learningRate: learningRate,
+		epochs:       epochs,
 	}
 
 	for i := 0; i < len(sizes)-1; i++ {

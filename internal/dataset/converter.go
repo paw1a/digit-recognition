@@ -18,7 +18,7 @@ type LabelsHeader struct {
 	LabelsCount int32
 }
 
-func LoadDataset(imagesPath string, labelsPath string) ([][]float64, []float64, error) {
+func LoadDataset(imagesPath string, labelsPath string) ([][]float64, [][]float64, error) {
 	imagesFile, err := os.Open(imagesPath)
 	if err != nil {
 		return nil, nil, fmt.Errorf("can't open file %s: %v", imagesPath, err)
@@ -74,14 +74,14 @@ func loadImages(file *os.File, imagesHeader *ImagesHeader) ([][]float64, error) 
 	for i := 0; i < len(imageBytes); i++ {
 		images[i] = make([]float64, size)
 		for j := 0; j < size; j++ {
-			images[i][j] = float64(imageBytes[i][j])
+			images[i][j] = float64(imageBytes[i][j]) / 255
 		}
 	}
 
 	return images, nil
 }
 
-func loadLabels(file *os.File, labelsHeader *LabelsHeader) ([]float64, error) {
+func loadLabels(file *os.File, labelsHeader *LabelsHeader) ([][]float64, error) {
 	labelBytes := make([]byte, labelsHeader.LabelsCount)
 
 	err := binary.Read(file, binary.BigEndian, labelBytes)
@@ -90,17 +90,18 @@ func loadLabels(file *os.File, labelsHeader *LabelsHeader) ([]float64, error) {
 		return nil, fmt.Errorf("can't read label data: %v", err)
 	}
 
-	labels := make([]float64, len(labelBytes))
+	labels := make([][]float64, len(labelBytes))
 
 	for i := 0; i < len(labels); i++ {
-		labels[i] = float64(labelBytes[i])
+		labels[i] = make([]float64, 10)
+		labels[i][labelBytes[i]] = 1
 	}
 
 	return labels, nil
 }
 
 func readImagesHeader(file *os.File) (*ImagesHeader, error) {
-	var imagesHeader *ImagesHeader
+	imagesHeader := new(ImagesHeader)
 
 	err := binary.Read(file, binary.BigEndian, imagesHeader)
 	if err != nil {
@@ -112,7 +113,7 @@ func readImagesHeader(file *os.File) (*ImagesHeader, error) {
 }
 
 func readLabelsHeader(file *os.File) (*LabelsHeader, error) {
-	var labelsHeader *LabelsHeader
+	labelsHeader := new(LabelsHeader)
 
 	err := binary.Read(file, binary.BigEndian, labelsHeader)
 	if err != nil {
