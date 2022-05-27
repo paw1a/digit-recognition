@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/gen2brain/raylib-go/raylib"
+	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/paw1a/digit-recognition/internal/dataset"
 	"github.com/paw1a/digit-recognition/pkg/model"
 	"image/color"
@@ -126,8 +126,6 @@ func main() {
 			resultDigit, resultOutput := mod.PredictDigit(sum)
 			digit = strconv.Itoa(resultDigit)
 			output = resultOutput
-
-			fmt.Printf("%d, %v\n", digit, output)
 		}
 
 		rl.UpdateTexture(texture, pixels)

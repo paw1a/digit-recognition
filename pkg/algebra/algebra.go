@@ -1,8 +1,8 @@
 package algebra
 
 import (
-	"fmt"
 	"math/rand"
+	"time"
 )
 
 func AddVector(vector1 []float64, vector2 []float64) []float64 {
@@ -20,6 +20,8 @@ func AddVector(vector1 []float64, vector2 []float64) []float64 {
 }
 
 func RandomMatrix(height int, width int) [][]float64 {
+	rand.Seed(time.Now().Unix())
+
 	matrix := make([][]float64, height)
 
 	for i := 0; i < height; i++ {
@@ -33,6 +35,8 @@ func RandomMatrix(height int, width int) [][]float64 {
 }
 
 func RandomVector(size int) []float64 {
+	rand.Seed(time.Now().Unix())
+
 	vector := make([]float64, size)
 
 	for i := 0; i < size; i++ {
@@ -44,7 +48,6 @@ func RandomVector(size int) []float64 {
 
 func DotMatrixVector(matrix [][]float64, vector []float64) []float64 {
 	if len(matrix) == 0 || len(matrix) != len(vector) {
-		fmt.Printf("err")
 		return nil
 	}
 

@@ -6,12 +6,12 @@ import (
 	"math/rand"
 )
 
-func (m *model) Fit(input [][]float64, real [][]float64) {
+func (m *Model) Fit(input [][]float64, real [][]float64) {
 	if len(input) != len(real) {
 		return
 	}
 
-	for i := 0; i < m.epochs; i++ {
+	for i := 0; i < m.Epochs; i++ {
 		var loss float64
 		var correct int
 
@@ -35,9 +35,11 @@ func (m *model) Fit(input [][]float64, real [][]float64) {
 		}
 		printLearningStat(i+1, loss/float64(len(input)), float64(correct)/float64(len(input)))
 	}
+
+	m.Trained = true
 }
 
-func (m *model) TestModel(input [][]float64, real [][]float64) {
+func (m *Model) TestModel(input [][]float64, real [][]float64) {
 	var correct int
 	var loss float64
 
