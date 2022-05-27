@@ -23,7 +23,7 @@ type Model struct {
 	Trained      bool
 }
 
-func (m *Model) SerializeModel(filePath string, mod *Model) error {
+func SerializeModel(filePath string, mod *Model) error {
 	file, err := os.Create(filePath)
 	defer file.Close()
 
@@ -40,7 +40,7 @@ func (m *Model) SerializeModel(filePath string, mod *Model) error {
 	return err
 }
 
-func (m *Model) DeserializeModel(filePath string, mod *Model) error {
+func DeserializeModel(filePath string, mod *Model) error {
 	file, err := os.Open(filePath)
 	defer file.Close()
 

@@ -20,10 +20,10 @@ const (
 
 var (
 	filenames = []string{
-		TrainImages,
 		TrainLabels,
-		TestImages,
+		TrainImages,
 		TestLabels,
+		TestImages,
 	}
 
 	urls = []string{
@@ -83,7 +83,7 @@ func DownloadDataset() error {
 
 	for i, filename := range filenames {
 		if _, err := os.Stat(filename); err != nil {
-			err = DownloadFile(urls[i], path.Join(Directory, filenames[i]))
+			err = DownloadFile(urls[i], path.Join(Directory, filename))
 			if err != nil {
 				return err
 			}

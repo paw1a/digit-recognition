@@ -6,8 +6,8 @@ import (
 	"math/rand"
 )
 
-func (m *Model) Fit(input [][]float64, real [][]float64) {
-	if len(input) != len(real) {
+func (m *Model) Fit(input [][]float64, labels [][]float64) {
+	if len(input) != len(labels) {
 		return
 	}
 
@@ -20,18 +20,18 @@ func (m *Model) Fit(input [][]float64, real [][]float64) {
 
 			digit, output := m.PredictDigit(input[inputIndex])
 
-			if real[inputIndex][digit] == 1 {
+			if labels[inputIndex][digit] == 1 {
 				correct++
 			}
 
 			for k := 0; k < len(output); k++ {
-				if real[inputIndex][k] == 1 {
+				if labels[inputIndex][k] == 1 {
 					loss += -math.Log(output[k])
 					break
 				}
 			}
 
-			m.BackPropagation(output, real[inputIndex])
+			m.BackPropagation(output, labels[inputIndex])
 		}
 		printLearningStat(i+1, loss/float64(len(input)), float64(correct)/float64(len(input)))
 	}
@@ -39,7 +39,7 @@ func (m *Model) Fit(input [][]float64, real [][]float64) {
 	m.Trained = true
 }
 
-func (m *Model) TestModel(input [][]float64, real [][]float64) {
+func (m *Model) TestModel(input [][]float64, labels [][]float64) {
 	var correct int
 	var loss float64
 
@@ -55,12 +55,12 @@ func (m *Model) TestModel(input [][]float64, real [][]float64) {
 			}
 		}
 
-		if real[i][maxProbabilityIndex] == 1 {
+		if labels[i][maxProbabilityIndex] == 1 {
 			correct++
 		}
 
 		for k := 0; k < len(output); k++ {
-			if real[i][k] == 1 {
+			if labels[i][k] == 1 {
 				loss += -math.Log(output[k])
 				break
 			}
