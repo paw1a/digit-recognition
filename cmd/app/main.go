@@ -1,9 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gen2brain/raylib-go/raylib"
+	"github.com/paw1a/digit-recognition/internal/dataset"
+	"github.com/paw1a/digit-recognition/pkg/model"
 	"image/color"
-	"math/rand"
+	"math"
 	"strconv"
 )
 
@@ -28,6 +31,12 @@ var (
 		B: 255,
 		A: 255,
 	}
+	DarkGrayColor = color.RGBA{
+		R: 50,
+		G: 50,
+		B: 50,
+		A: 255,
+	}
 )
 
 func max(n1 int, n2 int) int {
@@ -47,12 +56,24 @@ func min(n1 int, n2 int) int {
 }
 
 func main() {
+	if dataset.DatasetExists() {
+		err := dataset.DownloadDataset()
+		if err != nil {
+			fmt.Printf("download dataset error: %v", err)
+		}
+	}
+
+	mod := model.NewModel([]int{784, 800, 10}, 0.001, 5)
+
+	digit := ""
+	output := make([]float64, 10)
+
 	rl.InitWindow(ScreenWidth, ScreenHeight, "Digit Recognition")
 
 	rl.SetTargetFPS(60)
 
 	pixels := make([]color.RGBA, RectSize*RectSize)
-	image := rl.NewImage(make([]byte, RectSize*RectSize),
+	image := rl.NewImage(make([]byte, RectSize*RectSize*4),
 		RectSize, RectSize, 1, rl.UncompressedR8g8b8a8)
 	texture := rl.LoadTextureFromImage(image)
 
@@ -61,7 +82,7 @@ func main() {
 	for !rl.WindowShouldClose() {
 		rl.BeginDrawing()
 
-		rl.ClearBackground(rl.Black)
+		rl.ClearBackground(DarkGrayColor)
 
 		if rl.IsMouseButtonDown(rl.MouseLeftButton) {
 			mousePrevX := float32(rl.GetMouseX()) - rl.GetMouseDelta().X
@@ -87,8 +108,8 @@ func main() {
 			pixels = make([]color.RGBA, RectSize*RectSize)
 		}
 
-		if rl.IsKeyPressed(rl.KeyEnter) {
-			sum := make([]int, 28*28)
+		if rl.IsMouseButtonReleased(rl.MouseLeftButton) {
+			sum := make([]float64, 28*28)
 			for i := 0; i < RectSize*RectSize; i++ {
 				y := i / (RectSize * 15)
 				x := (i % RectSize) / 15
@@ -99,21 +120,14 @@ func main() {
 			}
 
 			for i := 0; i < 28*28; i++ {
-				sum[i] = int(255 * (float32(sum[i]) / (15 * 15)))
+				sum[i] = float64(sum[i]) / (15 * 15)
 			}
 
-			for i := 0; i < RectSize*RectSize; i++ {
-				y := i / (RectSize * 15)
-				x := (i % RectSize) / 15
+			resultDigit, resultOutput := mod.PredictDigit(sum)
+			digit = strconv.Itoa(resultDigit)
+			output = resultOutput
 
-				col := uint8(sum[y*28+x])
-				pixels[i] = color.RGBA{
-					R: col,
-					G: col,
-					B: col,
-					A: 255,
-				}
-			}
+			fmt.Printf("%d, %v\n", digit, output)
 		}
 
 		rl.UpdateTexture(texture, pixels)
@@ -134,13 +148,16 @@ func main() {
 		}, 7, GrayColor)
 
 		for i := 0; i < 10; i++ {
-			rl.DrawText(strconv.Itoa(i), RectSize+200, int32(50+i*50), 50, GrayColor)
-			rl.DrawRectangle(RectSize+250, int32(50+i*50), int32(rand.Intn(300)), 42, GrayColor)
+			rl.DrawText(strconv.Itoa(i), RectSize+250, int32(55+i*40), 45, GrayColor)
+			rl.DrawRectangle(RectSize+300, int32(55+i*40), int32(math.Max(output[i]*300, 5)), 40, GrayColor)
 		}
 
-		rl.DrawText("0", 100, 80+RectSize, RectSize/2, WhiteColor)
+		rl.DrawText("OUTPUT", 70+RectSize/2, 70+RectSize, 40, GrayColor)
 
-		rl.DrawFPS(10, 10)
+		rl.DrawText(digit, 100, 80+RectSize, RectSize/2, WhiteColor)
+
+		rl.DrawText("DRAW DIGIT", 50, 10, 40, GrayColor)
+		rl.DrawText("PROBABILITIES", RectSize+250, 10, 40, GrayColor)
 
 		rl.EndDrawing()
 	}

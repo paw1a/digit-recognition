@@ -62,6 +62,21 @@ func (m *model) BackPropagation(output []float64, real []float64) {
 	}
 }
 
+func (m model) PredictDigit(input []float64) (digit int, output []float64) {
+	output = m.FeedForward(input)
+
+	maxProbability := output[0]
+	maxProbabilityIndex := 0
+	for k := 0; k < len(output); k++ {
+		if output[k] > maxProbability {
+			maxProbability = output[k]
+			maxProbabilityIndex = k
+		}
+	}
+
+	return maxProbabilityIndex, output
+}
+
 func NewModel(sizes []int, learningRate float64, epochs int) *model {
 	model := &model{
 		layers:       make([]layer, len(sizes)),

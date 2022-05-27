@@ -18,18 +18,9 @@ func (m *model) Fit(input [][]float64, real [][]float64) {
 		for j := 0; j < len(input); j++ {
 			inputIndex := rand.Intn(len(input))
 
-			output := m.FeedForward(input[inputIndex])
+			digit, output := m.PredictDigit(input[inputIndex])
 
-			maxProbability := output[0]
-			maxProbabilityIndex := 0
-			for k := 0; k < len(output); k++ {
-				if output[k] > maxProbability {
-					maxProbability = output[k]
-					maxProbabilityIndex = k
-				}
-			}
-
-			if real[inputIndex][maxProbabilityIndex] == 1 {
+			if real[inputIndex][digit] == 1 {
 				correct++
 			}
 
