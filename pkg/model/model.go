@@ -7,6 +7,13 @@ import (
 	"os"
 )
 
+type TrainingState struct {
+	CurrentEpoch     int
+	CurrentIteration int
+	DatasetSize      int
+	CurrentLoss      float64
+}
+
 type Layer struct {
 	Weights     [][]float64
 	Biases      []float64
@@ -17,10 +24,11 @@ type Layer struct {
 }
 
 type Model struct {
-	Layers       []Layer
-	LearningRate float64
-	Epochs       int
-	Trained      bool
+	Layers        []Layer
+	LearningRate  float64
+	Epochs        int
+	Trained       bool
+	TrainingState TrainingState
 }
 
 func SerializeModel(filePath string, mod *Model) error {

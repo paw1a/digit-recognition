@@ -61,7 +61,8 @@ func min(n1 int, n2 int) int {
 }
 
 func TrainModel(mod *model.Model) {
-	if !dataset.DatasetExists() {
+	if !dataset.Exists() {
+		fmt.Printf("Dataset dowloading...\n")
 		err := dataset.DownloadDataset()
 		if err != nil {
 			fmt.Printf("failed to download dataset: %v\n", err)
@@ -75,6 +76,7 @@ func TrainModel(mod *model.Model) {
 		return
 	}
 
+	fmt.Printf("Dataset loading...\n")
 	input, labels, err := dataset.LoadDataset(
 		path.Join(dataset.Directory, dataset.TrainImages),
 		path.Join(dataset.Directory, dataset.TrainLabels))
@@ -189,8 +191,8 @@ func main() {
 		}, 7, GrayColor)
 
 		for i := 0; i < 10; i++ {
-			rl.DrawText(strconv.Itoa(i), RectSize+500, int32(55+i*40), 45, GrayColor)
-			rl.DrawRectangle(RectSize+550, int32(55+i*40), int32(math.Max(output[i]*300, 5)), 40, GrayColor)
+			rl.DrawText(strconv.Itoa(i), RectSize+400, int32(55+i*40), 45, GrayColor)
+			rl.DrawRectangle(RectSize+450, int32(55+i*40), int32(math.Max(output[i]*300, 5)), 40, GrayColor)
 		}
 
 		rl.DrawText("OUTPUT:", 70+RectSize/2, 70+RectSize, 40, GrayColor)
@@ -201,7 +203,19 @@ func main() {
 		rl.DrawText(digit, 100, 80+RectSize, RectSize/2, WhiteColor)
 
 		rl.DrawText("DRAW DIGIT", 50, 10, 40, GrayColor)
-		rl.DrawText("PROBABILITIES", RectSize+500, 10, 40, GrayColor)
+		rl.DrawText("PROBABILITIES", RectSize+400, 10, 40, GrayColor)
+
+		rl.DrawText("TRAINING", RectSize+400, 70+RectSize, 40, GrayColor)
+		if mod.Trained {
+			rl.DrawText("DONE", RectSize+400, 110+RectSize, 40, GrayColor)
+			rl.DrawRectangle(RectSize+400, RectSize+150, 400, 40, GrayColor)
+		} else {
+			rl.DrawText(fmt.Sprintf("EPOCH: %d", mod.TrainingState.CurrentEpoch), RectSize+400, 110+RectSize, 40, GrayColor)
+			progressBarSize := int32(400 * (float32(mod.TrainingState.CurrentIteration) /
+				float32(mod.TrainingState.DatasetSize)))
+
+			rl.DrawRectangle(RectSize+400, RectSize+150, progressBarSize, 40, GrayColor)
+		}
 
 		rl.EndDrawing()
 	}

@@ -8,7 +8,7 @@ import (
 )
 
 func Run() {
-	if dataset.DatasetExists() {
+	if dataset.Exists() {
 		err := dataset.DownloadDataset()
 		if err != nil {
 			fmt.Printf("download dataset error: %v", err)

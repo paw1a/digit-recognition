@@ -7,6 +7,8 @@ import (
 )
 
 func (m *Model) Fit(input [][]float64, labels [][]float64) {
+	m.TrainingState.DatasetSize = len(input)
+
 	if len(input) != len(labels) {
 		return
 	}
@@ -15,7 +17,12 @@ func (m *Model) Fit(input [][]float64, labels [][]float64) {
 		var loss float64
 		var correct int
 
+		m.TrainingState.CurrentEpoch = i
+		m.TrainingState.CurrentLoss = loss
+
 		for j := 0; j < len(input); j++ {
+			m.TrainingState.CurrentIteration = j + 1
+
 			inputIndex := rand.Intn(len(input))
 
 			digit, output := m.PredictDigit(input[inputIndex])

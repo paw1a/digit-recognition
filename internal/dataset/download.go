@@ -34,13 +34,13 @@ var (
 	}
 )
 
-func DatasetExists() bool {
+func Exists() bool {
 	if _, err := os.Stat(Directory); err != nil {
 		return false
 	}
 
 	for _, filename := range filenames {
-		if _, err := os.Stat(filename); err != nil {
+		if _, err := os.Stat(path.Join(Directory, filename)); err != nil {
 			return false
 		}
 	}
