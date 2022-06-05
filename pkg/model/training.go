@@ -1,7 +1,7 @@
 package model
 
 import (
-	"fmt"
+	"log"
 	"math"
 	"math/rand"
 )
@@ -78,5 +78,5 @@ func (m *Model) TestModel(input [][]float64, labels [][]float64) {
 }
 
 func printLearningStat(epoch int, loss float64, accuracy float64) {
-	fmt.Printf("Epoch: %d. Loss = %f. Accuracy = %f\n", epoch, loss, accuracy)
+	log.Printf("Epoch: %d. Loss = %f. Accuracy = %f\n", epoch, loss, accuracy)
 }
