@@ -63,3 +63,19 @@ func DotMatrixVector(matrix [][]float64, vector []float64) []float64 {
 
 	return result
 }
+
+func Max(n1 int, n2 int) int {
+	if n1 > n2 {
+		return n1
+	} else {
+		return n2
+	}
+}
+
+func Min(n1 int, n2 int) int {
+	if n1 < n2 {
+		return n1
+	} else {
+		return n2
+	}
+}

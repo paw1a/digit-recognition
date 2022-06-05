@@ -1,17 +1,15 @@
 package model
 
 import (
-	"encoding/gob"
-	"fmt"
 	"github.com/paw1a/digit-recognition/pkg/algebra"
-	"os"
 )
 
-type TrainingState struct {
-	CurrentEpoch     int
-	CurrentIteration int
-	DatasetSize      int
-	CurrentLoss      float64
+type Model struct {
+	Layers        []Layer
+	LearningRate  float64
+	Epochs        int
+	Trained       bool
+	TrainingState TrainingState
 }
 
 type Layer struct {
@@ -23,54 +21,11 @@ type Layer struct {
 	derivative  func(x float64) float64
 }
 
-type Model struct {
-	Layers        []Layer
-	LearningRate  float64
-	Epochs        int
-	Trained       bool
-	TrainingState TrainingState
-}
-
-func SerializeModel(filePath string, mod *Model) error {
-	file, err := os.Create(filePath)
-	defer file.Close()
-
-	if err != nil {
-		return fmt.Errorf("can't create serialization file %s: %v", filePath, err)
-	}
-
-	encoder := gob.NewEncoder(file)
-	err = encoder.Encode(mod)
-	if err != nil {
-		return fmt.Errorf("serialization error: %v", err)
-	}
-
-	return err
-}
-
-func DeserializeModel(filePath string, mod *Model) error {
-	file, err := os.Open(filePath)
-	defer file.Close()
-
-	if err != nil {
-		return fmt.Errorf("can't open deserialization file %s: %v", filePath, err)
-	}
-
-	decoder := gob.NewDecoder(file)
-	err = decoder.Decode(mod)
-	if err != nil {
-		return fmt.Errorf("deserialization error: %v", err)
-	}
-
-	for i := 0; i < len(mod.Layers); i++ {
-		mod.Layers[i].activation = ReluActivation
-		mod.Layers[i].derivative = ReluDerivative
-	}
-
-	mod.Layers[len(mod.Layers)-1].activation = SoftmaxActivation
-	mod.Layers[len(mod.Layers)-1].derivative = SoftmaxDerivativeStub
-
-	return err
+type TrainingState struct {
+	CurrentEpoch     int
+	CurrentIteration int
+	DatasetSize      int
+	CurrentLoss      float64
 }
 
 func (m *Model) FeedForward(input []float64) []float64 {
